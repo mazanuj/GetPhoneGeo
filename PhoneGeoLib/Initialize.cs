@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -51,11 +52,8 @@ namespace PhoneGeoLib
                     if (row == null) //null is when the row only contains empty cells 
                         continue;
 
-                    if (row.GetCell(3).CellType == CellType.Blank || row.GetCell(4).CellType != CellType.Blank)
-                    {
-                        //sheet.RemoveRow(row);
+                    if (row.GetCell(3).CellType == CellType.Blank)
                         continue;
-                    }
 
                     var type = row.GetCell(3).CellType;
                     string tel;
@@ -71,6 +69,8 @@ namespace PhoneGeoLib
                         default:
                             throw new Exception($"Wrong phone cell type ({type}) in {num + 1} row");
                     }
+
+                    tel = new string(tel.Where(char.IsDigit).ToArray());
 
                     if (!Regex.IsMatch(tel, @"^\d{11}$"))
                         continue;
